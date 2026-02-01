@@ -86,13 +86,38 @@ document.addEventListener('DOMContentLoaded', () => {
             if (saved) {
                 b.status = saved.status;
                 b.holder = saved.holder;
+                b.issueDate = saved.issueDate; // Restore date
             }
         });
     }
 
     renderBooks(books);
     updateStats();
+
+    // Add Click Listeners to Stats
+    document.querySelectorAll('.stat-card').forEach((card, index) => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+            if (index === 0) filterBooks('all');
+            if (index === 1) filterBooks('Available');
+            if (index === 2) filterBooks('Issued');
+
+            // Visual highlight
+            document.querySelectorAll('.stat-card').forEach(c => c.style.borderColor = 'var(--border)');
+            card.style.borderColor = 'var(--primary)';
+        });
+    });
 });
+
+// Filter Function
+function filterBooks(status) {
+    if (status === 'all') {
+        renderBooks(books);
+    } else {
+        const filtered = books.filter(b => b.status === status);
+        renderBooks(filtered);
+    }
+}
 
 // Stats Function
 function updateStats() {
@@ -141,7 +166,11 @@ function renderBooks(booksToRender) {
             <div class="status-badge ${statusClass}">
                 ${book.status === 'Issued' ? '⛔ Issued' : '✅ Available'}
             </div>
-            ${book.status === 'Issued' ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">Holder: ${book.holder}</div>` : ''}
+            ${book.status === 'Issued' ? `
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem; border-top:1px solid #334155; padding-top:0.5rem;">
+                    <div>👤 ${book.holder}</div>
+                    <div>📅 ${book.issueDate || 'Unknown'}</div>
+                </div>` : ''}
         `;
         bookList.appendChild(card);
     });
@@ -197,10 +226,11 @@ issueForm.addEventListener('submit', (e) => {
     // Update State
     books[bookIndex].status = 'Issued';
     books[bookIndex].holder = member;
+    books[bookIndex].issueDate = formData.get('issueDate'); // Save Date
 
     saveState(); // Persist
     renderBooks(books);
-    updateStats(); // Refresh stats
+    updateStats();
     showStatus(`Book "${books[bookIndex].title}" issued successfully!`, 'success');
     e.target.reset();
     document.querySelector('input[name="issueDate"]').value = new Date().toISOString().split('T')[0];
@@ -228,10 +258,11 @@ returnForm.addEventListener('submit', (e) => {
     const penalty = calculatePenalty(books[bookIndex].id);
     books[bookIndex].status = 'Available';
     books[bookIndex].holder = null;
+    books[bookIndex].issueDate = null; // Clear Date
 
     saveState(); // Persist
     renderBooks(books);
-    updateStats(); // Refresh stats
+    updateStats();
     showStatus(`Book returned! ${penalty}`, 'success');
     e.target.reset();
     document.querySelector('input[name="returnDate"]').value = new Date().toISOString().split('T')[0];
