@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibSpace | Modern Library Management</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="brand">LibSpace</div>
+            
+            <div class="search-wrapper">
+                <span class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search books by title, author, or ID...">
+            </div>
+        </header>
+
+        <!-- Logic Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- Book List View -->
+            <section>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="section-title">Library Collection</h2>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">Showing <span id="bookCount">0</span> books</div>
+                </div>
+                
+                <div id="bookList" class="book-grid">
+                    <!-- Books Rendered Here via JS -->
+                </div>
+            </section>
+
+            <!-- Operations Panel -->
+            <aside>
+                <div class="panel">
+                    <h3 class="section-title" style="margin-bottom: 1rem;">Operations</h3>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab('issue')">Issue</div>
+                        <div class="tab" onclick="switchTab('return')">Return</div>
+                    </div>
+
+                    <!-- Issue Form -->
+                    <form id="issueForm">
+                        <div class="form-group">
+                            <label class="form-label">Book ID</label>
+                            <input type="text" class="form-control" name="bookId" placeholder="e.g. 101" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Member Name</label>
+                            <input type="text" class="form-control" name="memberName" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Issue Date</label>
+                            <input type="date" class="form-control" name="issueDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirm Issue</button>
+                    </form>
+
+                    <!-- Return Form -->
+                    <form id="returnForm" class="hidden">
+                        <div class="form-group">
+                            <label class="form-label">Book ID</label>
+                            <input type="text" class="form-control" name="bookId" placeholder="e.g. 101" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Return Date</label>
+                            <input type="date" class="form-control" name="returnDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background-color: var(--secondary);">Confirm Return</button>
+                    </form>
+
+                    <div id="statusMessage" style="margin-top: 1rem; font-size: 0.875rem; text-align: center; display: none;"></div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
