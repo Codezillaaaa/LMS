@@ -85,7 +85,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (saved) {
                 b.status = saved.status;
                 b.holder = saved.holder;
-                b.issueDate = saved.issueDate; // Restore date
+
+                // Intelligent Merge:
+                // 1. If saved has a date, use it.
+                // 2. If saved is Issued but has NO date (old data), keep the NEW mock date we just added.
+                // 3. Otherwise (Available), clear it.
+                if (saved.issueDate) {
+                    b.issueDate = saved.issueDate;
+                } else if (saved.status === 'Issued' && b.status === 'Issued') {
+                    // Keep the backfilled mock date
+                } else {
+                    b.issueDate = null;
+                }
             }
         });
     }
