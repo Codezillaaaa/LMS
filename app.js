@@ -1,12 +1,18 @@
 
 // Mock Data
-let books = [
-    { id: '101', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', status: 'Available', holder: null, coverColor: '#e0f2fe' },
-    { id: '102', title: 'To Kill a Mockingbird', author: 'Harper Lee', status: 'Issued', holder: 'Alice Johnson', coverColor: '#fce7f3' },
-    { id: '103', title: '1984', author: 'George Orwell', status: 'Available', holder: null, coverColor: '#ede9fe' },
-    { id: '104', title: 'Pride and Prejudice', author: 'Jane Austen', status: 'Available', holder: null, coverColor: '#fef3c7' },
-    { id: '105', title: 'The Catcher in the Rye', author: 'J.D. Salinger', status: 'Issued', holder: 'Bob Smith', coverColor: '#dcfce7' },
-    { id: '106', title: 'The Hobbit', author: 'J.R.R. Tolkien', status: 'Available', holder: null, coverColor: '#fae8ff' }
+const books = [
+    { id: '101', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', status: 'Available', holder: null },
+    { id: '102', title: 'To Kill a Mockingbird', author: 'Harper Lee', status: 'Issued', holder: 'Alice J.' },
+    { id: '103', title: '1984', author: 'George Orwell', status: 'Available', holder: null },
+    { id: '104', title: 'Introduction to Algorithms', author: 'T. Cormen', status: 'Available', holder: null },
+    { id: '105', title: 'Clean Code', author: 'Robert C. Martin', status: 'Issued', holder: 'Dev_Mike' },
+    { id: '106', title: 'Design Patterns', author: 'Erich Gamma', status: 'Available', holder: null },
+    { id: '107', title: 'Artificial Intelligence', author: 'Russell & Norvig', status: 'Available', holder: null },
+    { id: '108', title: 'Database Systems', author: 'Navathe', status: 'Available', holder: null },
+    { id: '109', title: 'Operating Systems', author: 'Silberschatz', status: 'Issued', holder: 'SysAdmin_X' },
+    { id: '110', title: 'Computer Networks', author: 'Tanenbaum', status: 'Available', holder: null },
+    { id: '111', title: 'Rich Dad Poor Dad', author: 'Robert Kiyosaki', status: 'Available', holder: null },
+    { id: '112', title: 'Atomic Habits', author: 'James Clear', status: 'Issued', holder: 'Reader_Pro' }
 ];
 
 // DOM Elements
