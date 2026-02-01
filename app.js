@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     document.querySelector('input[name="issueDate"]').value = today;
     document.querySelector('input[name="returnDate"]').value = today;
-    
+
     renderBooks(books);
 });
 
@@ -40,20 +40,30 @@ function renderBooks(booksToRender) {
     booksToRender.forEach(book => {
         const card = document.createElement('div');
         card.className = 'book-card';
-        
+
         const statusClass = book.status === 'Available' ? 'status-available' : 'status-issued';
-        const initials = book.title.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+        const initials = book.title.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+        // Random gradient for cover if not set (or use logic)
+        const gradients = [
+            'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
+            'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
+            'linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)',
+            'linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)'
+        ];
+        const randomBg = gradients[Math.floor(Math.random() * gradients.length)];
 
         card.innerHTML = `
-            <div class="book-cover" style="background: ${book.coverColor}">
-                ${initials}
-                <div class="book-tag">#${book.id}</div>
+            <div class="book-cover" style="background: ${randomBg}">
+                <div class="book-initials">${initials}</div>
+                <div class="book-id-badge">#${book.id}</div>
             </div>
             <div class="book-title">${book.title}</div>
             <div class="book-author">by ${book.author}</div>
             <div class="status-badge ${statusClass}">
-                ${book.status === 'Issued' && book.holder ? `Issued to ${book.holder}` : book.status}
+                ${book.status === 'Issued' ? '⛔ Issued' : '✅ Available'}
             </div>
+            ${book.status === 'Issued' ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">Holder: ${book.holder}</div>` : ''}
         `;
         bookList.appendChild(card);
     });
@@ -62,19 +72,19 @@ function renderBooks(booksToRender) {
 // Search Logic
 searchInput.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
-    const filtered = books.filter(book => 
-        book.title.toLowerCase().includes(term) || 
-        book.author.toLowerCase().includes(term) || 
+    const filtered = books.filter(book =>
+        book.title.toLowerCase().includes(term) ||
+        book.author.toLowerCase().includes(term) ||
         book.id.includes(term)
     );
     renderBooks(filtered);
 });
 
 // Tab Switching
-window.switchTab = function(mode) {
+window.switchTab = function (mode) {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(t => t.classList.remove('active'));
-    
+
     if (mode === 'issue') {
         tabs[0].classList.add('active');
         issueForm.classList.remove('hidden');
@@ -109,11 +119,11 @@ issueForm.addEventListener('submit', (e) => {
     // Update State
     books[bookIndex].status = 'Issued';
     books[bookIndex].holder = member;
-    
+
     renderBooks(books);
     showStatus(`Book "${books[bookIndex].title}" issued successfully!`, 'success');
     e.target.reset();
-    
+
     // Reset date after form reset
     document.querySelector('input[name="issueDate"]').value = new Date().toISOString().split('T')[0];
 });
@@ -154,7 +164,7 @@ function showStatus(msg, type) {
     statusMessage.style.display = 'block';
     statusMessage.textContent = msg;
     statusMessage.style.color = type === 'error' ? '#ef4444' : '#10b981';
-    
+
     setTimeout(() => {
         statusMessage.style.display = 'none';
     }, 3000);
