@@ -72,6 +72,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('input[name="issueDate"]').value = today;
     document.querySelector('input[name="returnDate"]').value = today;
 
+    // Load from LocalStorage if exists
+    const savedBooks = localStorage.getItem('library_books');
+    if (savedBooks) {
+        // We merge saved status with our mock data to ensure we have images/titles 
+        // (in case code changed, but preserving status)
+        // For simplicity in this demo, we can just assume mock data structure is stable 
+        // or prioritize saved state if IDs match.
+        const parsed = JSON.parse(savedBooks);
+        // Map saved status back to mock books to keep content fresh but status persisted
+        books.forEach(b => {
+            const saved = parsed.find(p => p.id === b.id);
+            if (saved) {
+                b.status = saved.status;
+                b.holder = saved.holder;
+            }
+        });
+    }
+
     renderBooks(books);
     updateStats();
 });
@@ -85,6 +103,11 @@ function updateStats() {
     statTotal.textContent = total;
     statAvailable.textContent = available;
     statIssued.textContent = issued;
+}
+
+// Persist Function
+function saveState() {
+    localStorage.setItem('library_books', JSON.stringify(books));
 }
 
 // Render Function
@@ -109,7 +132,7 @@ function renderBooks(booksToRender) {
 
         card.innerHTML = `
             <div class="book-cover" style="background: ${fallbackGradient}; padding: 0;">
-                <img src="${book.cover}" alt="${book.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem;" onerror="this.style.display='none'; this.parentElement.style.background='var(--gradient-brand)'; this.parentElement.innerHTML='<div class=\\'book-initials\\'>${initials}</div>'">
+                <img src="${book.cover}" alt="${book.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem;" onerror="this.style.display='none'; this.parentElement.style.background='var(--gradient-brand)'; this.parentElement.innerHTML='<div class=\\'book-initials\\'>${initials}</div>'">
                 ${!book.cover ? `<div class="book-initials">${initials}</div>` : ''}
                 <div class="book-id-badge">#${book.id}</div>
             </div>
@@ -126,7 +149,7 @@ function renderBooks(booksToRender) {
 
 // Search Logic
 searchInput.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
+    const term = e.target.value.toLowerCase().trim();
     const filtered = books.filter(book =>
         book.title.toLowerCase().includes(term) ||
         book.author.toLowerCase().includes(term) ||
@@ -156,8 +179,8 @@ window.switchTab = function (mode) {
 issueForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const bookId = formData.get('bookId');
-    const member = formData.get('memberName');
+    const bookId = formData.get('bookId').trim();
+    const member = formData.get('memberName').trim();
 
     const bookIndex = books.findIndex(b => b.id === bookId);
 
@@ -175,6 +198,7 @@ issueForm.addEventListener('submit', (e) => {
     books[bookIndex].status = 'Issued';
     books[bookIndex].holder = member;
 
+    saveState(); // Persist
     renderBooks(books);
     updateStats(); // Refresh stats
     showStatus(`Book "${books[bookIndex].title}" issued successfully!`, 'success');
@@ -186,7 +210,7 @@ issueForm.addEventListener('submit', (e) => {
 returnForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const bookId = formData.get('bookId');
+    const bookId = formData.get('bookId').trim();
 
     const bookIndex = books.findIndex(b => b.id === bookId);
 
@@ -205,6 +229,7 @@ returnForm.addEventListener('submit', (e) => {
     books[bookIndex].status = 'Available';
     books[bookIndex].holder = null;
 
+    saveState(); // Persist
     renderBooks(books);
     updateStats(); // Refresh stats
     showStatus(`Book returned! ${penalty}`, 'success');
